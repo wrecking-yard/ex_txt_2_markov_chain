@@ -63,5 +63,5 @@ iex> ExTxt2MarkovChain.new()
 
 ```
 
-file:///home/fmn/Downloads/markov_chain.svg![image](https://user-images.githubusercontent.com/19713848/195679885-0d609437-069c-4949-8727-a4b5e6702d0b.png)
+![image](https://user-images.githubusercontent.com/19713848/195679885-0d609437-069c-4949-8727-a4b5e6702d0b.png)
 
