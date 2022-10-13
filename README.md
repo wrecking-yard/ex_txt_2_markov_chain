@@ -63,5 +63,5 @@ iex> ExTxt2MarkovChain.new()
 
 ```
 
-[example chain](https://user-images.githubusercontent.com/19713848/195680256-e570a682-f00d-497b-b9bb-bb63a7242e06.png)
+![example chain](https://user-images.githubusercontent.com/19713848/195680256-e570a682-f00d-497b-b9bb-bb63a7242e06.png)
 
