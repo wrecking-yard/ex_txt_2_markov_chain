@@ -43,16 +43,22 @@ Or
 
 ```Elixir
 iex> ExTxt2MarkovChain.new()
-...> |> ExTxt2MarkovChain.update({"white", "cat"})
-...> |> ExTxt2MarkovChain.update({"white", "cat"})
-...> |> ExTxt2MarkovChain.update({"white", "dog"})
-...> |> ExTxt2MarkovChain.update({"black", "cat"})
+...> |> ExTxt2MarkovChain.update({"run", "sleep"})
+...> |> ExTxt2MarkovChain.update({"run", "eat"})
+...> |> ExTxt2MarkovChain.update({"eat", "sleep"})
+...> |> ExTxt2MarkovChain.update({"sit", "eat"})
+...> |> ExTxt2MarkovChain.update({"sit", "run"})
+...> |> ExTxt2MarkovChain.update({"sleep", "sit"})
 ...> |> ExTxt2MarkovChain.calculate_probability()
 %ExTxt2MarkovChain{
   map: %{
-    {"black", "cat"} => {1, 1.0},
-    {"white", "cat"} => {2, 0.6666666666666666},
-    {"white", "dog"} => {1, 0.3333333333333333}
+    {"eat", "sleep"} => {1, 1.0},
+    {"run", "eat"} => {1, 0.5},
+    {"run", "sleep"} => {1, 0.5},
+    {"sit", "eat"} => {1, 0.5},
+    {"sit", "run"} => {1, 0.5},
+    {"sleep", "sit"} => {1, 1.0}
   }
 }
+
 ```
