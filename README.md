@@ -1,6 +1,6 @@
 # ExTxt2MarkovChain
 
-Exercise in converting text to a [Markov Chain](https://en.wikipedia.org/wiki/Markov_chain)
+Exercise in producing a [Markov Chain](https://en.wikipedia.org/wiki/Markov_chain) out of text.
 
 ## Notes
 
