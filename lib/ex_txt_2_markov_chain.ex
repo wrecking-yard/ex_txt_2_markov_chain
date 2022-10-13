@@ -19,15 +19,15 @@ defmodule ExTxt2MarkovChain do
         }
 
   @spec update(t(), transition()) :: t()
-  def update(%__MODULE__{} = chain, {_state1, _state2} = transition) do
+  def update(%__MODULE__{} = chain, {_state, _new_state} = transition) do
     get_and_update_in(
       chain.map[transition],
       fn
         nil ->
-          {nil, [1, nil]}
+          {nil, {1, nil}}
 
-        [count, _probability] = v ->
-          {v, [count + 1, nil]}
+        {count, _probability} = v ->
+          {v, {count + 1, nil}}
       end
     )
     |> elem(1)
@@ -40,24 +40,42 @@ defmodule ExTxt2MarkovChain do
 
   @spec calculate_probability(t()) :: t()
   def calculate_probability(%__MODULE__{} = chain) do
-    keys = Map.keys(chain.map)
-    key_count = Map.values(chain.map) |> Enum.map(fn [c, _] -> c end) |> Enum.sum()
+    with key_prefixes <-
+           Enum.map(
+             Map.keys(chain.map),
+             fn {prefix, _} ->
+               prefix
+             end
+           )
+           |> Enum.uniq(),
+         transition_groups <-
+           Enum.map(key_prefixes, fn p1 ->
+             Enum.filter(Map.keys(chain.map), fn {p2, _} -> p2 === p1 end)
+           end) do
+      Enum.reduce(
+        transition_groups,
+        chain,
+        fn group, acc ->
+          key_count = Enum.reduce(group, 0, fn key, acc -> (chain.map[key] |> elem(0)) + acc end)
 
-    Enum.reduce(
-      keys,
-      chain,
-      fn k, acc ->
-        update_in(acc.map[k], fn [count, _probability] -> [count, count / key_count] end)
-      end
-    )
+          Enum.reduce(
+            group,
+            acc,
+            fn key, acc ->
+              update_in(acc.map[key], fn {count, _probability} -> {count, count / key_count} end)
+            end
+          )
+        end
+      )
+    end
   end
 
-  @spec generate(String.t()) :: t() | nil
-  def generate("") do
+  @spec from_file(String.t()) :: t() | nil
+  def from_file("") do
     nil
   end
 
-  def generate(file_path) when is_bitstring(file_path) do
+  def from_file(file_path) when is_bitstring(file_path) do
     chain =
       Enum.reduce(
         Read.stream(file_path),
@@ -66,9 +84,8 @@ defmodule ExTxt2MarkovChain do
           {reminder, tokens} = Token.from_string(line, acc.reminder)
 
           chain =
-            for [state1, state2] <- Enum.chunk_every(tokens, 2, 2, :discard),
-                reduce: acc.chain do
-              acc -> update(acc, {state1, state2})
+            for [state, new_state] <- _generate_transitions(tokens), reduce: acc.chain do
+              acc -> update(acc, {state, new_state})
             end
 
           %{chain: chain, reminder: reminder}
@@ -78,5 +95,9 @@ defmodule ExTxt2MarkovChain do
     update(chain.chain, {chain.reminder, nil})
     |> delete({nil, nil})
     |> calculate_probability()
+  end
+
+  defp _generate_transitions(states) when is_list(states) do
+    Enum.chunk_every(states, 2, 1)
   end
 end
