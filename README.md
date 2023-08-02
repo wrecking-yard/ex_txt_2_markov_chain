@@ -8,7 +8,7 @@ I noted some "toy" implementations which:
 - start new process to keep the state.
 - allow duplicate data.
 
-I've tried to give it a quick stab while avoiding both.
+My toy implementation is a quick stab at avoiding both.
 
 ## Examples
 
