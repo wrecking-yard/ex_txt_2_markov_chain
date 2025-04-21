@@ -14,7 +14,8 @@ defmodule ExTxt2MarkovChain do
   @type transition_count :: non_neg_integer()
   @type t :: %__MODULE__{
           map: %{
-            transition() => nonempty_improper_list(transition_count(), transition_probability())
+            transition() =>
+              nonempty_improper_list({transition_count(), transition_probability()}, {})
           }
         }
 
